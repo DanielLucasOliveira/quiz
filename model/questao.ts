@@ -55,6 +55,11 @@ export default class QuestaoModel {
         return new QuestaoModel(this.#id, this.#enunciado, respostasEmbaralhadas, this.#acertou)
     }
 
+    static criarComjson(obj: QuestaoModel): QuestaoModel {
+        const respostas = obj.respostas.map(resp => RespostaModel.criarComjson(resp))
+        return new QuestaoModel(obj.id, obj.enunciado, respostas, obj.acertou)
+    }
+
     paraObjeto() {
         return {
             id: this.#id,

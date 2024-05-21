@@ -4,6 +4,7 @@ import styles from '../styles/Temporizador.module.css'
 interface TempoProps {
     duracao: number
     tempoEsgotado: () => void
+    key: number
 }
 
 export default function Temporizador(props: TempoProps) {

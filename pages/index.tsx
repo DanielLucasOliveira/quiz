@@ -1,37 +1,76 @@
-import Questao from "@/components/Questao";
+import Questionario from "@/components/Questionario";
 import QuestaoModel from "@/model/questao";
-import RespostaModel from "@/model/resposta";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-const questaoTeste = new QuestaoModel(1, "Melhor cor?", [
-  RespostaModel.errada("Vermelho"),
-  RespostaModel.errada("Laranja"),
-  RespostaModel.errada("Azul"),
-  RespostaModel.certa("Verde")])
+const BASE_URL = 'http://localhost:3000/api'
+
 export default function Home() {
 
-  const [questao, setQuestao] = useState(questaoTeste)
+  const router = useRouter()
 
-  function respostaEnviada(indice: number) {
-    setQuestao(questao.respostaEscolhida(indice))
-    console.log(indice);
+  const [ids, setIds] = useState<number[]>([])
+  const [questao, setQuestao] = useState<QuestaoModel>()
+  const [corretas, setCorretas] = useState<number>(0)
+
+  async function loadingQuestionsIds() {
+    const resp = await fetch(`${BASE_URL}/questionario`)
+    const idsQuestoes = await resp.json();
+    setIds(idsQuestoes)
   }
 
-  function tempoEsgotado() {
-    if(questao.naoRespondida){
-      setQuestao(questao.respostaEscolhida(-1))
+  async function loadingQuestions(idQuestao: number) {
+    const resp = await fetch(`${BASE_URL}/questoes/${idQuestao}`)
+    const json = await resp.json();
+    setQuestao(QuestaoModel.criarComjson(json))
+
+  }
+
+  function questaoRespondida(questao: QuestaoModel) {
+    setQuestao(questao)
+    const certa = questao.acertou
+    setCorretas(corretas + (certa ? 1 : 0))
+  }
+
+  function nextId() {
+    if (questao) {
+      return ids[ids.indexOf(questao.id) + 1]
     }
   }
 
+  function toNext() {
+    const proximoId = nextId()
+    proximoId ? proximaPergunta(proximoId) : finalizar()
+  }
 
-  return (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh"
-    }}>
-      <Questao questao={questaoTeste} onResponse={respostaEnviada} tempoEsgotado={tempoEsgotado}/>
-    </div>
-  );
+  function proximaPergunta(proximoId: number) {
+    loadingQuestions(proximoId)
+  }
+
+  function finalizar() {
+    router.push({
+      pathname: "/resultado",
+      query: {
+        total: ids.length,
+        certas: corretas
+      }
+    })
+  }
+
+  useEffect(() => {
+    loadingQuestionsIds();
+  }, [])
+
+  useEffect(() => {
+    ids.length > 0 && loadingQuestions(ids[0])
+  }, [ids])
+
+
+  return questao ? (
+
+    <Questionario questao={questao} ultima={nextId() === undefined} questaoRespondida={questaoRespondida} toNext={toNext} />
+
+  ) : false ;
 }
+
+

@@ -6,6 +6,7 @@ import Temporizador from "./Temporizador";
 
 interface QuestaoProps {
     questao: QuestaoModel
+    duracao: number
     onResponse: (indice: number) => void
     tempoEsgotado: () => void
 }
@@ -22,14 +23,16 @@ export default function Questao(props: QuestaoProps) {
 
     function renderizarRespostas() {
         return questao.respostas.map((resp, i) => {
-            return <Resposta key={i} resposta={resp} indice={i} letra={letras[i].letra} backgroundLetra={letras[i].cor} onResponse={props.onResponse} />
+            console.log(resp);
+            
+            return <Resposta key={`${questao.id}-${i}`} resposta={resp} indice={i} letra={letras[i].letra} backgroundLetra={letras[i].cor} onResponse={props.onResponse} />
         })
     }
 
     return (
         <div className={styles.questao}>
             <Enunciado texto={questao.enunciado} />
-            <Temporizador duracao={10} tempoEsgotado={props.tempoEsgotado} />
+            <Temporizador key={questao.id} duracao={props.duracao} tempoEsgotado={props.tempoEsgotado} />
             {renderizarRespostas()}
         </div>
     )
