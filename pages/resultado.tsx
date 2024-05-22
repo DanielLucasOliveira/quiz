@@ -20,7 +20,7 @@ export default function Resultado() {
                 <Estatistica texto="Certas" valor={Number(certas)} corFundo="#9CD2A4" />
                 <Estatistica texto="Percentual" valor={`${percentual}%`} corFundo="#DE6A33" />
             </div>
-            <Botao href="/" texto="Tentar Novamente" />
+            <Botao href="/" texto="Inicio" />
         </div>
     );
 };
