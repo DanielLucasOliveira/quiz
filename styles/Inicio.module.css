@@ -8,8 +8,15 @@
     background-color: #fff;
     color: #444;
     border-radius: 10px;
+
+    .button {
+        align-self: center;
+        width: 50%;
+    }
 }
 
-.home h1 {
-    margin-bottom: 30px;
+
+.form {
+    padding: 10px;
 }
+
