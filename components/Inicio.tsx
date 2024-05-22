@@ -24,7 +24,7 @@ import { useRouter } from "next/router";
 
 
 const formSchema = z.object({
-    username: z.string().min(2).max(30),
+    username: z.string().min(3, { message: "Usuario deve ter no minimo 3 letras" }).max(30),
     dificuldade: z.string(),
 });
 
@@ -49,15 +49,15 @@ export default function Inicio() {
     }
     return (
         <div className={styles.home}>
-            <h1>StudyQuiz</h1>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <h1 className="font-bold" style={{ fontSize: "30px" }}>StudyQuiz</h1>
+            <Form {...form} >
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-12 w-full flex flex-col">
                     <FormField
                         control={form.control}
                         name="username"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Username</FormLabel>
+                                <FormLabel>Username:</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Usuario" {...field} />
                                 </FormControl>
@@ -94,7 +94,7 @@ export default function Inicio() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">
+                    <Button type="submit" className={styles.button}>
                         Jogar
                     </Button>
                 </form>
